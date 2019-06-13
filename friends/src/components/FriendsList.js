@@ -22,9 +22,9 @@ export default class FriendsList extends Component {
       });
   }
 
-  addFriend = friend => {
+  addFriend = addfriend => {
     axios
-      .post("http://localhost:5000/friends", friend)
+      .post(`http://localhost:5000/friends`, addfriend)
       .then(res => {
         this.setState({ friends: res.data });
         console.log(res);
@@ -45,9 +45,20 @@ export default class FriendsList extends Component {
       .catch(err => console.log(err));
   };
 
+  //   updateFriend = (id, updatedFriend) => {
+  //     axios
+  //       .put(`http://localhost:5000/friends/${id}`, updateFriend)
+  //       .then(res => console.log(res))
+  //       .catch(err => console.log(err));
+  //   };
+
   render() {
     return (
       <div className="friendlistwrapper">
+        <div>
+          <AddNewFriend addFriend={this.addFriend} />
+        </div>
+
         {this.state.friends.map(friend => (
           <div key={friend.id}>
             <p>Name: {friend.name} </p>
@@ -56,10 +67,6 @@ export default class FriendsList extends Component {
             <button onClick={e => this.deleteFriend(e, friend.id)}>X</button>
           </div>
         ))}
-
-        <div>
-          <AddNewFriend addFriend={this.addFriend} />
-        </div>
       </div>
     );
   }
