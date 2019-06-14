@@ -22,9 +22,9 @@ export default class FriendsList extends Component {
       });
   }
 
-  addFriend = addfriend => {
+  addFriend = (e, friend) => {
     axios
-      .post(`http://localhost:5000/friends`, addfriend)
+      .post(`http://localhost:5000/friends`, friend)
       .then(res => {
         this.setState({ friends: res.data });
         console.log(res);
@@ -45,18 +45,28 @@ export default class FriendsList extends Component {
       .catch(err => console.log(err));
   };
 
-  //   updateFriend = (id, updatedFriend) => {
-  //     axios
-  //       .put(`http://localhost:5000/friends/${id}`, updateFriend)
-  //       .then(res => console.log(res))
-  //       .catch(err => console.log(err));
-  //   };
+  updateFriend = (e, friend) => {
+    e.preventDefault();
+    axios
+      .put(`http://localhost:5000/friends/${friend.id}`, friend)
+      .then(res => this.setState({ friends: res.data }))
+      .catch(err => console.log(err));
+  };
+
+  setUpdateForm = (e, friend) => {
+    e.preventDefault();
+    this.setState({ activeFriend: friend });
+  };
 
   render() {
     return (
       <div className="friendlistwrapper">
         <div>
-          <AddNewFriend addFriend={this.addFriend} />
+          <AddNewFriend
+            activeFriend={this.state.activeFriend}
+            addFriend={this.addFriend}
+            updateFriend={this.updateFriend}
+          />
         </div>
 
         {this.state.friends.map(friend => (
@@ -64,6 +74,7 @@ export default class FriendsList extends Component {
             <p>Name: {friend.name} </p>
             <p>Age: {friend.age} </p>
             <p>Email: {friend.email} </p>
+            <button onClick={e => this.setUpdateForm(e, friend)}>Update</button>
             <button onClick={e => this.deleteFriend(e, friend.id)}>X</button>
           </div>
         ))}

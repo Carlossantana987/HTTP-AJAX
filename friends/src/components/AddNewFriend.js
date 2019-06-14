@@ -8,8 +8,18 @@ export default class AddNewFriend extends Component {
         name: "",
         age: "",
         email: ""
-      }
+      },
+      active: false
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.activeFriend &&
+      prevProps.activeFriend !== this.props.activeFriend
+    ) {
+      this.setState({ friend: this.props.activeFriend, active: true });
+    }
   }
 
   changeHandler = e => {
@@ -21,16 +31,28 @@ export default class AddNewFriend extends Component {
     });
   };
 
-  addHandler = e => {
+  submitHandler = e => {
     e.preventDefault();
-    this.props.addFriend(this.state.friend);
+    if (this.state.active) {
+      this.props.updateFriend(e, this.state.friend);
+    } else {
+      this.props.addFriend(e, this.state.friend);
+    }
+    this.setState({
+      friend: {
+        name: "",
+        age: "",
+        email: ""
+      },
+      active: false
+    });
   };
 
   render() {
     return (
       <div className="addfriendform">
         <h1>Add New Friend Form</h1>
-        <form onSubmit={this.addHandler}>
+        <form onSubmit={this.submitHandler}>
           <input
             type="text"
             name="name"
@@ -52,7 +74,7 @@ export default class AddNewFriend extends Component {
             onChange={this.changeHandler}
             value={this.state.friend.email}
           />
-          <button type="submit">ADD</button>
+          <button>{`${this.state.active ? "Update" : "Add Friend"}`}</button>
         </form>
       </div>
     );
